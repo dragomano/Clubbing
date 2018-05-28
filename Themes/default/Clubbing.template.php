@@ -8,7 +8,7 @@
  * @author Bugo <bugo@dragomano.ru>
  * @copyright 2018 Bugo
  *
- * @version 0.1 alpha
+ * @version 0.1 beta
  */
 
 function template_profile()
@@ -39,23 +39,25 @@ function template_profile()
 					</div>
 					<div class="list_posts">', $item['text'], '</div>';
 
-			if ($context['cb_can_delete'])
+			if ($context['cb_can_delete']) {
 				echo '
-					<div class="list_posts">', $item['requisites'], '</div>
-					<div class="list_posts">', implode(', ', $context['members'][$item['topic']]), '</div>';
+					<div class="list_posts">', $item['requisites'], '</div>';
+
+				if (!empty($context['clubbing_members'][$item['topic']]))
+					echo '
+					<div class="list_posts">', implode(', ', $context['clubbing_members'][$item['topic']]), '</div>';
+			}
 
 			echo '
 				</div>';
 
 			if ($context['cb_can_delete'])
 				echo '
-				<div class="modal" data-iziModal-title="' . $txt['cb_clubbing_adding_members'] . '" data-iziModal-icon="icon-home">
+				<div class="modal" id="modal_', $item['topic'], '" data-iziModal-title="' . $txt['cb_clubbing_adding_members'] . '" data-iziModal-icon="icon-home">
 					<div class="modal-content">
 						<form name="clubbing_form_', $item['topic'], '" method="post" action="javascript:void(null);">
 							<input type="hidden" name="topic" value="', $item['topic'], '" />
-							<div>
-								<input type="text" name="members" placeholder="' . $txt['cb_enter_members'] . '" required />
-							</div>
+							<input type="text" name="new_member" placeholder="' . $txt['cb_enter_members'] . '" required />
 							<div class="centertext">
 								<button type="button" class="button_submit" data-izimodal-close data-izimodal-transitionout="bounceOutDown">' . $txt['find_close'] . '</button>
 								<button type="submit" name="submit" class="button_submit">' . $txt['post'] . '</button>
@@ -68,7 +70,7 @@ function template_profile()
 				echo '
 				<div class="floatright">
 					<ul class="reset smalltext quickbuttons">
-						<li class="approve_button">
+						<li class="approve_button" data-izimodal-open="#modal_', $item['topic'], '">
 							<a href="#"><span>', $txt['cb_add_member'], '</span></a>
 						</li>
 						<li class="remove_button">
@@ -98,7 +100,7 @@ function template_profile()
 		$context['insert_after_template'] .= '
 	<script type="text/javascript">
 		jQuery(document).ready(function($){
-			$(".approve_button").attr("data-izimodal-open", ".modal").attr("data-izimodal-transitionin", "fadeInDown");
+			$(".approve_button").attr("data-izimodal-transitionin", "fadeInDown");
 			$(".modal").iziModal();
 			$("form[name^=clubbing_form]").on("submit", function(){
 				msg = $(this).serialize();

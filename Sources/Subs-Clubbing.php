@@ -170,9 +170,9 @@ function clubbingProfile($memID)
 		)
 	);
 
-	$context['members'] = [];
+	$context['clubbing_members'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$context['members'][$row['topic_id']][] = $row['member_name'];
+		$context['clubbing_members'][$row['topic_id']][] = $row['member_name'];
 
 	$smcFunc['db_free_result']($request);
 
@@ -181,11 +181,11 @@ function clubbingProfile($memID)
 
 	$context['cb_can_delete'] = $context['current_member'] == $user_info['id'];
 
-	$redirect = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '?action=profile;u=' . $memID . ';area=clubbings';
+	$redirect = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '?action=profile;area=clubbings;u=' . $memID;
 
 	if ($context['cb_can_delete']) {
-		if (isset($_POST['members'])) {
-			$members = explode(',', trim($_POST['members'], ' '));
+		if (isset($_POST['new_member'])) {
+			$members = explode(',', trim($_POST['new_member'], ' '));
 
 			foreach ($members as $member) {
 				$smcFunc['db_insert']('replace',
@@ -214,7 +214,7 @@ function clubbingProfile($memID)
 
 
 			if (isset($_REQUEST['profile'], $_REQUEST['start'], $_REQUEST['u']))
-				redirectexit('action=profile;u=' . $_REQUEST['u'] . ';area=clubbings;start=' . $_REQUEST['start']);
+				redirectexit('action=profile;area=clubbings;start=' . $_REQUEST['start'] . ';u=' . $_REQUEST['u']);
 			else
 				redirectexit($redirect);
 		}
