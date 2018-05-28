@@ -11,6 +11,70 @@
  * @version 0.1 beta
  */
 
+function template_post()
+{
+}
+
+function template_display_above()
+{
+}
+
+function template_display_below()
+{
+	global $context, $txt, $user_info, $scripturl;
+
+	$currency = empty($context['clubbing']['currency']) ? 'RUB' : $context['clubbing']['currency'];
+
+	echo '
+	<div id="clubbing_modal" data-iziModal-title="' . (empty( $context['clubbing']['id']) ? $txt['cb_clubbing_creating'] : $txt['cb_clubbing_editing']) . '" data-iziModal-icon="icon-home">
+		<div class="modal-content">
+			<form name="clubbing_form" method="post" action="javascript:void(null);">
+				<input type="hidden" name="topic" value="' . $context['current_topic'] . '" />
+				<input type="hidden" name="user" value="' . $user_info['id'] . '" />
+				<div>
+					<input type="number" name="price" min="0" step="0.01" ' . (!empty($context['clubbing']['price']) ? 'value="' . $context['clubbing']['price'] . '" ' : '') . 'placeholder="' . $txt['cb_enter_price'] . '" required />
+					<select name="currency">
+						<option' . ($currency == 'RUB' ? ' selected="selected"' : '') . '>RUB</option>
+						<option' . ($currency == 'UAH' ? ' selected="selected"' : '') . '>UAH</option>
+						<option' . ($currency == 'USD' ? ' selected="selected"' : '') . '>USD</option>
+						<option' . ($currency == 'EUR' ? ' selected="selected"' : '') . '>EUR</option>
+					</select>
+				</div>
+				<div>
+					<textarea name="requisites" placeholder="' . $txt['cb_enter_requisites'] . '" required>' . (!empty($context['clubbing']['requisites']) ? $context['clubbing']['requisites'] : '') . '</textarea>
+				</div>
+				<div class="centertext">
+					<button type="button" class="button_submit" data-izimodal-close data-izimodal-transitionout="bounceOutDown">' . $txt['find_close'] . '</button>
+					<button type="submit" name="submit" class="button_submit">' . $txt['post'] . '</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<script type="text/javascript">
+		jQuery(document).ready(function($){
+			$(".button_strip_' . (empty($context['clubbing']['id']) ? 'add' : 'edit') . '_clubbing").attr("data-izimodal-open", "#clubbing_modal").attr("data-izimodal-transitionin", "fadeInDown");
+			$("#clubbing_modal").iziModal();
+			$("form[name=clubbing_form]").on("submit", function(){
+				msg = $(this).serialize();
+				$.ajax({
+					type: "POST",
+					url: "' . $scripturl . '?action=clubbings;sa=' . (empty($context['clubbing']['id']) ? 'add' : 'edit') . '",
+					data: msg,
+					success: function(){
+						$("#modal").iziModal("close", {
+							transition: "bounceOutDown"
+						});
+						window.location = smf_prepareScriptUrl(smf_scripturl) + \'topic=' . $context['current_topic'] . '.0\';
+					},
+					error: function(){
+						alert("' . JavaScriptEscape($txt['cb_is_error']) . '" + xhr.responseCode);
+					}
+				});
+			});
+		});
+	</script>';
+}
+
 function template_profile()
 {
 	global $context, $scripturl, $txt;

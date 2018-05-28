@@ -27,9 +27,12 @@ function clubbingActions()
 
 function clubbingAdd()
 {
-	global $sourcedir, $smcFunc;
+	global $context, $sourcedir, $smcFunc;
 
 	isAllowedTo('make_clubbings');
+
+	loadTemplate('Clubbing');
+	$context['sub_template'] = 'post';
 
 	if (empty($_POST))
 		return;
@@ -62,9 +65,12 @@ function clubbingAdd()
 
 function clubbingEdit()
 {
-	global $sourcedir, $smcFunc;
+	global $context, $sourcedir, $smcFunc;
 
 	isAllowedTo('make_clubbings');
+
+	loadTemplate('Clubbing');
+	$context['sub_template'] = 'post';
 
 	if (empty($_POST))
 		return;

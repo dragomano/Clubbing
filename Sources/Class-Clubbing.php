@@ -65,7 +65,7 @@ class Clubbing
 
 	public static function display_buttons(&$normal_buttons)
 	{
-		global $context, $user_info, $sourcedir, $smcFunc, $scripturl, $txt;
+		global $context, $user_info, $sourcedir, $smcFunc;
 
 		// Если текущий пользователь не автор темы или не может создавать складчины, дальше идти смысла нет
 		if ($context['topic_starter_id'] != $user_info['id'] || !allowedTo('make_clubbings'))
@@ -86,10 +86,12 @@ class Clubbing
 		while ($row = $smcFunc['db_fetch_assoc']($request))	{
 			censorText($row['requisites']);
 
-			$clubbing   = $row['id'];
-			$price      = $row['price'];
-			$currency   = $row['currency'];
-			$requisites = un_preparsecode($row['requisites']);
+			$context['clubbing'] = array(
+				'id'         => $row['id'],
+				'price'      => $row['price'],
+				'currency'   => $row['currency'],
+				'requisites' => un_preparsecode($row['requisites'])
+			);
 		}
 
 		$smcFunc['db_free_result']($request);
@@ -98,7 +100,7 @@ class Clubbing
 
 		$normal_buttons = array_merge(
 			array_slice($normal_buttons, 0, $counter, true),
-			empty($clubbing) ? array(
+			empty($context['clubbing']['id']) ? array(
 				'add_clubbing' => array(
 					'test'  => 'make_clubbings',
 					'text'  => 'cb_add_clubbing',
@@ -118,56 +120,8 @@ class Clubbing
 			array_slice($normal_buttons, $counter, null, true)
 		);
 
-		$currency = empty($clubbing) ? 'RUB' : $currency;
-
-		$context['insert_after_template'] .= '
-		<div id="modal" data-iziModal-title="' . (empty($clubbing) ? $txt['cb_clubbing_creating'] : $txt['cb_clubbing_editing']) . '" data-iziModal-icon="icon-home">
-			<div class="modal-content">
-				<form name="clubbing_form" method="post" action="javascript:void(null);">
-					<input type="hidden" name="topic" value="' . $context['current_topic'] . '" />
-					<input type="hidden" name="user" value="' . $user_info['id'] . '" />
-					<div>
-						<input type="number" name="price" min="0" step="0.01" ' . (!empty($price) ? 'value="' . $price . '" ' : '') . 'placeholder="' . $txt['cb_enter_price'] . '" required />
-						<select name="currency">
-							<option' . ($currency == 'RUB' ? ' selected="selected"' : '') . '>RUB</option>
-							<option' . ($currency == 'UAH' ? ' selected="selected"' : '') . '>UAH</option>
-							<option' . ($currency == 'USD' ? ' selected="selected"' : '') . '>USD</option>
-							<option' . ($currency == 'EUR' ? ' selected="selected"' : '') . '>EUR</option>
-						</select>
-					</div>
-					<div>
-						<textarea name="requisites" placeholder="' . $txt['cb_enter_requisites'] . '" required>' . (!empty($requisites) ? $requisites : '') . '</textarea>
-					</div>
-					<div class="centertext">
-						<button type="button" class="button_submit" data-izimodal-close data-izimodal-transitionout="bounceOutDown">' . $txt['find_close'] . '</button>
-						<button type="submit" name="submit" class="button_submit">' . $txt['post'] . '</button>
-					</div>
-				</form>
-			</div>
-		</div>
-		<script type="text/javascript">
-			jQuery(document).ready(function($){
-				$(".button_strip_' . (empty($clubbing) ? 'add' : 'edit') . '_clubbing").attr("data-izimodal-open", "#modal").attr("data-izimodal-transitionin", "fadeInDown");
-				$("#modal").iziModal();
-				$("form[name=clubbing_form]").on("submit", function(){
-					msg = $(this).serialize();
-					$.ajax({
-						type: "POST",
-						url: "' . $scripturl . '?action=clubbings;sa=' . (empty($clubbing) ? 'add' : 'edit') . '",
-						data: msg,
-						success: function(){
-							$("#modal").iziModal("close", {
-								transition: "bounceOutDown"
-							});
-							window.location = smf_prepareScriptUrl(smf_scripturl) + \'topic=' . $context['current_topic'] . '.0\';
-						},
-						error: function(){
-							alert("' . JavaScriptEscape($txt['cb_is_error']) . '" + xhr.responseCode);
-						}
-					});
-				});
-			});
-		</script>';
+		loadTemplate('Clubbing');
+		$context['template_layers'][] = 'display';
 	}
 
 	public static function prepare_display_context(&$output, &$message)
