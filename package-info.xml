@@ -15,7 +15,6 @@
 
 	<uninstall for="2.0 - 2.0.99">
 		<code>hooks.php</code>
-		<remove-file name="$sourcedir/Subs-Clubbing.php" />
 		<remove-file name="$sourcedir/Class-Clubbing.php" />
 		<remove-file name="$themedir/Clubbing.template.php" />
 		<remove-file name="$themedir/scripts/clubbing" />
