@@ -9,8 +9,8 @@ if ((SMF == 'SSI') && !$user_info['is_admin'])
 	die('Admin privileges required.');
 
 $hooks = array(
-	'integrate_pre_include' => '$sourcedir/Subs-Clubbing.php',
-	'integrate_pre_load'    => 'clubbingHooks'
+	'integrate_pre_include' => '$sourcedir/Class-Clubbing.php',
+	'integrate_pre_load'    => 'Clubbing::hooks'
 );
 
 if (!empty($context['uninstalling']))
