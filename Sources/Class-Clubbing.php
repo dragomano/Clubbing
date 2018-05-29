@@ -16,6 +16,11 @@ if (!defined('SMF'))
 
 class Clubbing
 {
+	/**
+	 * Подключаем используемые хуки
+	 *
+	 * @return void
+	 */
 	public static function hooks()
 	{
 		add_integration_function('integrate_load_theme', 'Clubbing::loadTheme', false);
@@ -26,6 +31,11 @@ class Clubbing
 		add_integration_function('integrate_profile_areas', 'Clubbing::profileAreas', false);
 	}
 
+	/**
+	 * Подключаем языковой файл, а также используемые стили и скрипты
+	 *
+	 * @return void
+	 */
 	public static function loadTheme()
 	{
 		global $context, $settings;
@@ -46,11 +56,22 @@ class Clubbing
 		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/clubbing/iziModal.min.js"></script>';
 	}
 
+	/**
+	 * Подключаем область clubbings для работы со складчинами
+	 *
+	 * @param array $action_array
+	 * @return void
+	 */
 	public static function actions(&$action_array)
 	{
 		$action_array['clubbings'] = array('Class-Clubbing.php', array('Clubbing', 'subactions'));
 	}
 
+	/**
+	 * Объявляем массив возможных действий (создание, редактирование)
+	 *
+	 * @return void
+	 */
 	public static function subactions()
 	{
 		$subActions = array(
@@ -62,6 +83,11 @@ class Clubbing
 			return call_user_func($subActions[$_REQUEST['sa']]);
 	}
 
+	/**
+	 * Добавление складчины
+	 *
+	 * @return void
+	 */
 	private static function addClubbing()
 	{
 		global $context, $sourcedir, $smcFunc;
@@ -100,6 +126,11 @@ class Clubbing
 		}
 	}
 
+	/**
+	 * Редактирование складчины
+	 *
+	 * @return void
+	 */
 	private static function editClubbing()
 	{
 		global $context, $sourcedir, $smcFunc;
@@ -133,6 +164,13 @@ class Clubbing
 		}
 	}
 
+	/**
+	 * Объявляем права доступа для создания/управления складчинами
+	 *
+	 * @param array $permissionGroups
+	 * @param array $permissionList
+	 * @return void
+	 */
 	public static function loadPermissions(&$permissionGroups, &$permissionList)
 	{
 		global $context;
@@ -145,6 +183,12 @@ class Clubbing
 		$context['non_guest_permissions'] = array_merge($context['non_guest_permissions'], array('make_clubbings'));
 	}
 
+	/**
+	 * Добавляем кнопки для создания/редактирования складчин на странице темы
+	 *
+	 * @param array $normal_buttons
+	 * @return void
+	 */
 	public static function displayButtons(&$normal_buttons)
 	{
 		global $context, $user_info, $sourcedir, $smcFunc;
@@ -206,7 +250,13 @@ class Clubbing
 		$context['template_layers'][] = 'display';
 	}
 
-	public static function prepareDisplayContext(&$output, &$message)
+	/**
+	 * Выводим список текущих участников складчины, либо количество участников
+	 *
+	 * @param array $output
+	 * @return void
+	 */
+	public static function prepareDisplayContext(&$output)
 	{
 		global $context, $smcFunc, $sourcedir, $txt, $boardurl, $user_info, $scripturl;
 
@@ -298,6 +348,12 @@ class Clubbing
 		}
 	}
 
+	/**
+	 * Создаем раздел "Складчины" в профиле пользователя
+	 *
+	 * @param array $profile_areas
+	 * @return void
+	 */
 	public static function profileAreas(&$profile_areas)
 	{
 		global $txt;
@@ -314,6 +370,12 @@ class Clubbing
 	}
 }
 
+/**
+ * Вывод списка складчин в профиле пользователя, с возможностью добавления участников
+ *
+ * @param int $memID
+ * @return void
+ */
 function clubbingProfile($memID)
 {
 	global $context, $txt, $scripturl, $user_info, $user_profile, $smcFunc;
@@ -408,6 +470,7 @@ function clubbingProfile($memID)
 	$redirect = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '?action=profile;area=clubbings;u=' . $memID;
 
 	if ($context['cb_can_delete']) {
+		// Добавляем участников
 		if (isset($_POST['new_member'])) {
 			$members = explode(',', trim($_POST['new_member'], ' '));
 
@@ -427,6 +490,7 @@ function clubbingProfile($memID)
 			}
 		}
 
+		// Удаляем складчину
 		if (isset($_REQUEST['del_item'])) {
 			$smcFunc['db_query']('', '
 				DELETE FROM {db_prefix}cb_items
