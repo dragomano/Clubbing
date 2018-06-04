@@ -263,18 +263,21 @@ class Clubbing
 		if ($output['id'] == $context['topic_first_message']) {
 			// Список текущих участников
 			$request = $smcFunc['db_query']('', '
-				SELECT member_id AS id, IFNULL(member_name, 0) AS member_name
-				FROM {db_prefix}cb_members
-					INNER JOIN {db_prefix}members ON (id_member = member_id)
-				WHERE topic_id = {int:current_topic}',
+				SELECT m.member_id AS id, i.requisites, IFNULL(mem.member_name, 0) AS member_name
+				FROM {db_prefix}cb_members AS m
+					INNER JOIN {db_prefix}cb_items AS i ON (i.topic_id = m.topic_id)
+					INNER JOIN {db_prefix}members AS mem ON (mem.id_member = m.member_id)
+				WHERE i.topic_id = {int:current_topic}',
 				array(
 					'current_topic' => $context['current_topic']
 				)
 			);
 
 			$members = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db_fetch_assoc']($request)) {
+				$requisites          = $row['requisites'];
 				$members[$row['id']] = $row['member_name'];
+			}
 
 			$smcFunc['db_free_result']($request);
 
@@ -304,19 +307,6 @@ class Clubbing
 
 			// Вывод кнопки "Присоединиться"
 			if (!$output['is_message_author']) {
-				$request = $smcFunc['db_query']('', '
-					SELECT requisites
-					FROM {db_prefix}cb_items
-					WHERE topic_id = {int:current_topic}
-					LIMIT 1',
-					array(
-						'current_topic' => $context['current_topic']
-					)
-				);
-
-				list ($requisites) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
-
 				if (!empty($requisites)) {
 					require_once($sourcedir . '/Subs-Post.php');
 
@@ -415,8 +405,8 @@ function clubbingProfile($memID)
 	$request = $smcFunc['db_query']('', '
 		SELECT c.id, c.price, c.requisites, t.id_topic, m.subject, m.body, m.poster_time
 		FROM {db_prefix}cb_items AS c
-			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = c.topic_id)
-			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
+			LEFT JOIN {db_prefix}topics AS t ON (t.id_topic = c.topic_id)
+			LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
 		WHERE t.id_member_started = {int:current_user}
 		ORDER BY m.poster_time ' . ($reverse ? 'ASC' : 'DESC') . '
 		LIMIT {int:start}, {int:num}',
@@ -446,21 +436,23 @@ function clubbingProfile($memID)
 
 	$smcFunc['db_free_result']($request);
 
-	$request = $smcFunc['db_query']('', '
-		SELECT topic_id, IFNULL(member_name, 0) AS member_name
-		FROM {db_prefix}cb_members
-			INNER JOIN {db_prefix}members ON (id_member = member_id)
-		WHERE topic_id IN ({array_int:topics})',
-		array(
-			'topics' => $topics
-		)
-	);
+	if (!empty($topics)) {
+		$request = $smcFunc['db_query']('', '
+			SELECT topic_id, IFNULL(member_name, 0) AS member_name
+			FROM {db_prefix}cb_members
+				INNER JOIN {db_prefix}members ON (id_member = member_id)
+			WHERE topic_id IN ({array_int:topics})',
+			array(
+				'topics' => $topics
+			)
+		);
 
-	$context['clubbing_members'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$context['clubbing_members'][$row['topic_id']][] = $row['member_name'];
+		$context['clubbing_members'] = [];
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+			$context['clubbing_members'][$row['topic_id']][] = $row['member_name'];
 
-	$smcFunc['db_free_result']($request);
+		$smcFunc['db_free_result']($request);
+	}
 
 	if ($reverse)
 		$context['items'] = array_reverse($context['items'], true);
@@ -494,12 +486,19 @@ function clubbingProfile($memID)
 		if (isset($_REQUEST['del_item'])) {
 			$smcFunc['db_query']('', '
 				DELETE FROM {db_prefix}cb_items
-				WHERE id = {int:item}',
+				WHERE topic_id = {int:topic}',
 				array(
-					'item' => (int) $_REQUEST['del_item']
+					'topic' => (int) $_REQUEST['del_item']
 				)
 			);
 
+			$smcFunc['db_query']('', '
+				DELETE FROM {db_prefix}cb_members
+				WHERE topic_id = {int:topic}',
+				array(
+					'topic' => (int) $_REQUEST['del_item']
+				)
+			);
 
 			if (isset($_REQUEST['profile'], $_REQUEST['start'], $_REQUEST['u']))
 				redirectexit('action=profile;area=clubbings;start=' . $_REQUEST['start'] . ';u=' . $_REQUEST['u']);

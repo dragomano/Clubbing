@@ -138,7 +138,7 @@ function template_profile()
 							<a href="#"><span>', $txt['cb_add_member'], '</span></a>
 						</li>
 						<li class="remove_button">
-							<a href="', $scripturl, '?action=profile;area=clubbings;u=', $context['member']['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], ';del_item=', $item['id'], '"><span>', $txt['remove'], '</span></a>
+							<a href="', $scripturl, '?action=profile;area=clubbings;u=', $context['member']['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], ';del_item=', $item['topic'], '"><span>', $txt['remove'], '</span></a>
 						</li>
 					</ul>
 				</div>';
