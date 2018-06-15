@@ -8,7 +8,7 @@
  * @author Bugo <bugo@dragomano.ru>
  * @copyright 2018 Bugo
  *
- * @version 0.1 beta
+ * @version 0.1
  */
 
 function template_post()
@@ -103,7 +103,7 @@ function template_profile()
 					</div>
 					<div class="list_posts">', $item['text'], '</div>';
 
-			if ($context['cb_can_delete']) {
+			if ($context['cb_can_manage']) {
 				echo '
 					<div class="list_posts">', $item['requisites'], '</div>';
 
@@ -115,13 +115,13 @@ function template_profile()
 			echo '
 				</div>';
 
-			if ($context['cb_can_delete'])
+			if ($context['cb_can_manage'])
 				echo '
 				<div class="modal" id="modal_', $item['topic'], '" data-iziModal-title="' . $txt['cb_clubbing_adding_members'] . '" data-iziModal-icon="icon-home">
 					<div class="modal-content">
 						<form name="clubbing_form_', $item['topic'], '" method="post" action="javascript:void(null);">
 							<input type="hidden" name="topic" value="', $item['topic'], '" />
-							<input type="text" name="new_member" placeholder="' . $txt['cb_enter_members'] . '" required />
+							<input type="text" name="members" placeholder="' . $txt['cb_enter_members'] . '" required />
 							<div class="centertext">
 								<button type="button" class="button_submit" data-izimodal-close data-izimodal-transitionout="bounceOutDown">' . $txt['find_close'] . '</button>
 								<button type="submit" name="submit" class="button_submit">' . $txt['post'] . '</button>
@@ -130,7 +130,7 @@ function template_profile()
 					</div>
 				</div>';
 
-			if ($context['cb_can_delete'])
+			if ($context['cb_can_manage'])
 				echo '
 				<div class="floatright">
 					<ul class="reset smalltext quickbuttons">
@@ -156,33 +156,33 @@ function template_profile()
 		</div>';
 	} else {
 		echo '
-		<p class="information">', $txt['cb_no_items'], '</p>
-		<br class="clear" />';
+		<div class="information">', $txt['cb_no_items'], '</div>';
 	}
 
-	if ($context['cb_can_delete'])
+	if ($context['cb_can_manage']) {
 		$context['insert_after_template'] .= '
-	<script type="text/javascript">
-		jQuery(document).ready(function($){
-			$(".approve_button").attr("data-izimodal-transitionin", "fadeInDown");
-			$(".modal").iziModal();
-			$("form[name^=clubbing_form]").on("submit", function(){
-				msg = $(this).serialize();
-				$.ajax({
-					type: "POST",
-					url: "' . $scripturl . '?action=profile;area=clubbings;u=' . $context['member']['id'] . '",
-					data: msg,
-					success: function(){
-						$("#modal").iziModal("close", {
-							transition: "bounceOutDown"
-						});
-						window.location = smf_prepareScriptUrl(smf_scripturl) + \'action=profile;area=clubbings;u=' . $context['member']['id'] . '\';
-					},
-					error: function(){
-						alert("' . JavaScriptEscape($txt['cb_is_error']) . '" + xhr.responseCode);
-					}
+		<script type="text/javascript">
+			jQuery(document).ready(function($){
+				$(".approve_button").attr("data-izimodal-transitionin", "fadeInDown");
+				$(".modal").iziModal();
+				$("form[name^=clubbing_form]").on("submit", function(){
+					msg = $(this).serialize();
+					$.ajax({
+						type: "POST",
+						url: "' . $scripturl . '?action=profile;area=clubbings;u=' . $context['member']['id'] . '",
+						data: msg,
+						success: function(){
+							$("#modal").iziModal("close", {
+								transition: "bounceOutDown"
+							});
+							window.location = smf_prepareScriptUrl(smf_scripturl) + \'action=profile;area=clubbings;u=' . $context['member']['id'] . '\';
+						},
+						error: function(){
+							alert("' . JavaScriptEscape($txt['cb_is_error']) . '" + xhr.responseCode);
+						}
+					});
 				});
 			});
-		});
-	</script>';
+		</script>';
+	}
 }

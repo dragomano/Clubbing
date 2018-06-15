@@ -30,7 +30,7 @@ $txt['cb_clubbing_list']                = 'Members';
 $txt['cb_clubbing_list1']               = 'Total members: ';
 $txt['cb_add_member']                   = 'Add member';
 $txt['cb_clubbing_adding_members']      = 'Adding members';
-$txt['cb_enter_members']                = 'Enter ID(s) member(s)';
+$txt['cb_enter_members']                = 'Enter a comma separated list of member names';
 
 $txt['permissiongroup_clubbings']       = $txt['permissiongroup_simple_clubbings'] = $txt['cb_clubbings'];
 $txt['permissionname_make_clubbings']   = 'Create clubbings';

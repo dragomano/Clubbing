@@ -30,7 +30,7 @@ $txt['cb_clubbing_list']                = 'Участники';
 $txt['cb_clubbing_list1']               = 'Участников: ';
 $txt['cb_add_member']                   = 'Добавить участника';
 $txt['cb_clubbing_adding_members']      = 'Добавление участников';
-$txt['cb_enter_members']                = 'Укажите идентификатор(ы) пользователя(ей)';
+$txt['cb_enter_members']                = 'Укажите имена пользователей (через запятую)';
 
 $txt['permissiongroup_clubbings']       = $txt['permissiongroup_simple_clubbings'] = $txt['cb_clubbings'];
 $txt['permissionname_make_clubbings']   = 'Создание складчин';

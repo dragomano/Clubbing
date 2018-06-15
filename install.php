@@ -89,5 +89,3 @@ if (!$smcFunc['db_num_rows']($result))
 
 if (SMF == 'SSI')
 	echo 'Database changes are complete! Please wait...';
-
-?>

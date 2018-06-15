@@ -8,7 +8,7 @@
  * @author Bugo <bugo@dragomano.ru>
  * @copyright 2018 Bugo
  *
- * @version 0.1 beta
+ * @version 0.1
  */
 
 if (!defined('SMF'))
@@ -25,6 +25,7 @@ class Clubbing
 	{
 		add_integration_function('integrate_load_theme', 'Clubbing::loadTheme', false);
 		add_integration_function('integrate_actions', 'Clubbing::actions', false);
+		add_integration_function('integrate_menu_buttons', 'Clubbing::menuButtons', false);
 		add_integration_function('integrate_load_permissions', 'Clubbing::loadPermissions', false);
 		add_integration_function('integrate_display_buttons', 'Clubbing::displayButtons', false);
 		add_integration_function('integrate_prepare_display_context', 'Clubbing::prepareDisplayContext', false);
@@ -47,13 +48,15 @@ class Clubbing
 		if (empty($context['make_clubbings']))
 			return;
 
-		$context['html_headers'] .= '
+		if (!empty($_REQUEST['topic']) || (!empty($context['current_action']) && $context['current_action'] == 'profile')) {
+			$context['html_headers'] .= '
 	<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/clubbing/iziModal.min.css" />
 	<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/clubbing/clubbing.css" />';
 
-		$context['insert_after_template'] .= '
+			$context['insert_after_template'] .= '
 		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/clubbing/jquery.min.js"></script>
 		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/clubbing/iziModal.min.js"></script>';
+		}
 	}
 
 	/**
@@ -162,6 +165,36 @@ class Clubbing
 				)
 			);
 		}
+	}
+
+	/**
+	 * Добавление подпункта «Складчины» (Главное меню - Профиль)
+	 *
+	 * @param array $buttons — массив пунктов меню
+	 * @return void
+	 */
+	public static function menuButtons(&$buttons)
+	{
+		global $txt, $scripturl;
+
+		$counter = 0;
+		foreach ($buttons['profile']['sub_buttons'] as $area => $dummy) {
+			$counter++;
+			if ($area == 'forumprofile')
+				break;
+		}
+
+		$buttons['profile']['sub_buttons'] = array_merge(
+			array_slice($buttons['profile']['sub_buttons'], 0, $counter, true),
+			array(
+				'modsettings' => array(
+					'title' => $txt['cb_clubbings'],
+					'href'  => $scripturl . '?action=profile;area=clubbings',
+					'show'  => allowedTo('make_clubbings')
+				)
+			),
+			array_slice($buttons['profile']['sub_buttons'], $counter, null, true)
+		);
 	}
 
 	/**
@@ -457,28 +490,42 @@ function clubbingProfile($memID)
 	if ($reverse)
 		$context['items'] = array_reverse($context['items'], true);
 
-	$context['cb_can_delete'] = $context['current_member'] == $user_info['id'];
+	$context['cb_can_manage'] = $context['current_member'] == $user_info['id'];
 
-	$redirect = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '?action=profile;area=clubbings;u=' . $memID;
-
-	if ($context['cb_can_delete']) {
+	if ($context['cb_can_manage']) {
 		// Добавляем участников
-		if (isset($_POST['new_member'])) {
-			$members = explode(',', trim($_POST['new_member'], ' '));
+		if (isset($_POST['members'])) {file_put_contents('a.txt', $_POST['members']);
+			$members = explode(',', trim($_POST['members'], ' '));
 
-			foreach ($members as $member) {
-				$smcFunc['db_insert']('replace',
-					'{db_prefix}cb_members',
-					array(
-						'member_id' => 'int',
-						'topic_id'  => 'int'
-					),
-					array(
-						(int) $member,
-						(int) $_POST['topic']
-					),
-					array()
-				);
+			$request = $smcFunc['db_query']('', '
+				SELECT id_member
+				FROM {db_prefix}members
+				WHERE real_name IN ({array_string:names})',
+				array(
+					'names' => $members
+				)
+			);
+
+			while ($row = $smcFunc['db_fetch_assoc']($request))
+				$ids[] = $row;
+
+			$smcFunc['db_free_result']($request);
+
+			if (!empty($ids)) {
+				foreach ($ids as $member) {
+					$smcFunc['db_insert']('replace',
+						'{db_prefix}cb_members',
+						array(
+							'member_id' => 'int',
+							'topic_id'  => 'int'
+						),
+						array(
+							(int) $member['id_member'],
+							(int) $_POST['topic']
+						),
+						array()
+					);
+				}
 			}
 		}
 
@@ -500,6 +547,7 @@ function clubbingProfile($memID)
 				)
 			);
 
+			$redirect = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '?action=profile;area=clubbings;u=' . $memID;
 			if (isset($_REQUEST['profile'], $_REQUEST['start'], $_REQUEST['u']))
 				redirectexit('action=profile;area=clubbings;start=' . $_REQUEST['start'] . ';u=' . $_REQUEST['u']);
 			else
