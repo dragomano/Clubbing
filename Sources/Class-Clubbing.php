@@ -8,7 +8,7 @@
  * @author Bugo <bugo@dragomano.ru>
  * @copyright 2018 Bugo
  *
- * @version 0.1
+ * @version 0.1.1
  */
 
 if (!defined('SMF'))
@@ -296,21 +296,18 @@ class Clubbing
 		if ($output['id'] == $context['topic_first_message']) {
 			// Список текущих участников
 			$request = $smcFunc['db_query']('', '
-				SELECT m.member_id AS id, i.requisites, IFNULL(mem.member_name, 0) AS member_name
+				SELECT m.member_id AS id, IFNULL(mem.member_name, 0) AS member_name
 				FROM {db_prefix}cb_members AS m
-					INNER JOIN {db_prefix}cb_items AS i ON (i.topic_id = m.topic_id)
-					INNER JOIN {db_prefix}members AS mem ON (mem.id_member = m.member_id)
-				WHERE i.topic_id = {int:current_topic}',
+					LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.member_id)
+				WHERE m.topic_id = {int:current_topic}',
 				array(
 					'current_topic' => $context['current_topic']
 				)
 			);
 
 			$members = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request)) {
-				$requisites          = $row['requisites'];
+			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$members[$row['id']] = $row['member_name'];
-			}
 
 			$smcFunc['db_free_result']($request);
 
@@ -340,14 +337,28 @@ class Clubbing
 
 			// Вывод кнопки "Присоединиться"
 			if (!$output['is_message_author']) {
+				$request = $smcFunc['db_query']('', '
+					SELECT requisites
+					FROM {db_prefix}cb_items
+					WHERE topic_id = {int:current_topic}',
+					array(
+						'current_topic' => $context['current_topic']
+					)
+				);
+
+				list ($requisites) = $smcFunc['db_fetch_row']($request);
+				$smcFunc['db_free_result']($request);
+
 				if (!empty($requisites)) {
 					require_once($sourcedir . '/Subs-Post.php');
 
 					if (isset($members[$user_info['id']])) {
 						$output['body'] .= '
+				<br />
 				<input class="button_submit" type="button" value="' . $txt['cb_join_ready'] . '" disabled />';
 					} else {
-						$output['body'] .= '
+					$output['body'] .= '
+				<hr />
 				<input class="button_submit" name="cb_button_join" type="button" value="' . $txt['cb_join_to_clubbing'] . '" />
 				<div id="modal" data-iziModal-title="' . $txt['cb_clubbing_info'] . '" data-iziModal-icon="icon-home">
 					<div class="modal-content">
