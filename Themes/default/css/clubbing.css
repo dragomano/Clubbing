@@ -1,21 +1,21 @@
 .modal-content {
-	padding: 1em;
+	padding-right: 2em;
 }
 .modal-content label {
 	font-weight: bold;
 }
-.modal-content input, .modal-content textarea {
+.modal-content input[type="text"], .modal-content textarea {
 	width: 100%;
 	padding: 1em;
 	margin-bottom: 10px;
 }
-.modal-content input[type=number] {
-	width: 80%;
+.modal-content input[type="number"] {
+	width: 70%;
 	padding: 1em;
 	margin-bottom: 12px;
 }
 .modal-content select {
-	width: 19%;
+	width: 20%;
 	padding: .8em;
 	margin-bottom: 12px;
 }
@@ -24,24 +24,16 @@
 	border-radius: 5px;
 	font-size: 1.1em;
 }
+a.button_submit {
+	text-decoration: none;
+	padding: 0.2em;
+}
 ul.columns { margin: 0; padding: 0; list-style-type: none; word-spacing: -1ex; }
-/*
-    Firefox ниже версии 3 не знает о inline-block.
-    Поэтому указываем для него -moz-inline-stack
-*/
 .columns li { display: -moz-inline-stack; display: inline-block; //display: inline; }
-/*
-    Чтобы ссылки не нажимались кликом
-    по пустому месту, применим фильтр
-*/
 .columns a, .columns b { display: inline; word-spacing: normal; //display: inline-block; //filter: alpha(opacity=100); }
 .columns a, .columns b, x:-moz-any-link { display:block; }
-/*
-    Если Firefox выше 2.0, Возвращаем a и b в inline
-*/
 .columns a, .columns b, x:-moz-any-link, x:default { display: inline; }
 .columns li, .columns a, .columns b { vertical-align: top; }
-/* customize */
 .columns li { margin: 0 10% 0.4em 0; //margin: 0; width: 10%; //width: auto; }
 .columns a, .columns b { //margin: 0 10% 0.4em 0; //width: 40%; }
 .columns ul { width: 100%; }

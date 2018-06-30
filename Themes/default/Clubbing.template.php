@@ -7,8 +7,9 @@
  * @link https://dragomano.ru/mods/clubbing
  * @author Bugo <bugo@dragomano.ru>
  * @copyright 2018 Bugo
+ * @license https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA
  *
- * @version 0.1
+ * @version 0.2
  */
 
 function template_post()
@@ -26,8 +27,9 @@ function template_display_below()
 	$currency = empty($context['clubbing']['currency']) ? 'RUB' : $context['clubbing']['currency'];
 
 	echo '
-	<div id="clubbing_modal" data-iziModal-title="' . (empty( $context['clubbing']['id']) ? $txt['cb_clubbing_creating'] : $txt['cb_clubbing_editing']) . '" data-iziModal-icon="icon-home">
+	<div class="modal" id="clubbing" style="display:none">
 		<div class="modal-content">
+			<h3>' . (empty($context['clubbing']['id']) ? $txt['cb_clubbing_creating'] : $txt['cb_clubbing_editing']) . '</h3>
 			<form name="clubbing_form" method="post" action="javascript:void(null);">
 				<input type="hidden" name="topic" value="' . $context['current_topic'] . '" />
 				<input type="hidden" name="user" value="' . $user_info['id'] . '" />
@@ -44,7 +46,6 @@ function template_display_below()
 					<textarea name="requisites" placeholder="' . $txt['cb_enter_requisites'] . '" required>' . (!empty($context['clubbing']['requisites']) ? $context['clubbing']['requisites'] : '') . '</textarea>
 				</div>
 				<div class="centertext">
-					<button type="button" class="button_submit" data-izimodal-close data-izimodal-transitionout="bounceOutDown">' . $txt['find_close'] . '</button>
 					<button type="submit" name="submit" class="button_submit">' . $txt['post'] . '</button>
 				</div>
 			</form>
@@ -52,8 +53,7 @@ function template_display_below()
 	</div>
 	<script type="text/javascript">
 		jQuery(document).ready(function($){
-			$(".button_strip_' . (empty($context['clubbing']['id']) ? 'add' : 'edit') . '_clubbing").attr("data-izimodal-open", "#clubbing_modal").attr("data-izimodal-transitionin", "fadeInDown");
-			$("#clubbing_modal").iziModal();
+			$(".button_strip_' . (empty($context['clubbing']['id']) ? 'add' : 'edit') . '_clubbing").attr("rel", "modal:open");
 			$("form[name=clubbing_form]").on("submit", function(){
 				msg = $(this).serialize();
 				$.ajax({
@@ -61,9 +61,6 @@ function template_display_below()
 					url: "' . $scripturl . '?action=clubbings;sa=' . (empty($context['clubbing']['id']) ? 'add' : 'edit') . '",
 					data: msg,
 					success: function(){
-						$("#modal").iziModal("close", {
-							transition: "bounceOutDown"
-						});
 						window.location = smf_prepareScriptUrl(smf_scripturl) + \'topic=' . $context['current_topic'] . '.0\';
 					},
 					error: function(){
@@ -117,13 +114,13 @@ function template_profile()
 
 			if ($context['cb_can_manage'])
 				echo '
-				<div class="modal" id="modal_', $item['topic'], '" data-iziModal-title="' . $txt['cb_clubbing_adding_members'] . '" data-iziModal-icon="icon-home">
+				<div class="modal" id="modal_', $item['topic'], '" style="display:none">
 					<div class="modal-content">
+						<h3>' . $txt['cb_clubbing_adding_members'] . '</h3>
 						<form name="clubbing_form_', $item['topic'], '" method="post" action="javascript:void(null);">
 							<input type="hidden" name="topic" value="', $item['topic'], '" />
 							<input type="text" name="members" placeholder="' . $txt['cb_enter_members'] . '" required />
 							<div class="centertext">
-								<button type="button" class="button_submit" data-izimodal-close data-izimodal-transitionout="bounceOutDown">' . $txt['find_close'] . '</button>
 								<button type="submit" name="submit" class="button_submit">' . $txt['post'] . '</button>
 							</div>
 						</form>
@@ -135,7 +132,7 @@ function template_profile()
 				<div class="floatright">
 					<ul class="reset smalltext quickbuttons">
 						<li class="approve_button" data-izimodal-open="#modal_', $item['topic'], '">
-							<a href="#"><span>', $txt['cb_add_member'], '</span></a>
+							<a href="#modal_', $item['topic'], '"><span>', $txt['cb_add_member'], '</span></a>
 						</li>
 						<li class="remove_button">
 							<a href="', $scripturl, '?action=profile;area=clubbings;u=', $context['member']['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], ';del_item=', $item['topic'], '"><span>', $txt['remove'], '</span></a>
@@ -163,8 +160,7 @@ function template_profile()
 		$context['insert_after_template'] .= '
 		<script type="text/javascript">
 			jQuery(document).ready(function($){
-				$(".approve_button").attr("data-izimodal-transitionin", "fadeInDown");
-				$(".modal").iziModal();
+				$(".approve_button a").attr("rel", "modal:open");
 				$("form[name^=clubbing_form]").on("submit", function(){
 					msg = $(this).serialize();
 					$.ajax({
@@ -172,9 +168,6 @@ function template_profile()
 						url: "' . $scripturl . '?action=profile;area=clubbings;u=' . $context['member']['id'] . '",
 						data: msg,
 						success: function(){
-							$("#modal").iziModal("close", {
-								transition: "bounceOutDown"
-							});
 							window.location = smf_prepareScriptUrl(smf_scripturl) + \'action=profile;area=clubbings;u=' . $context['member']['id'] . '\';
 						},
 						error: function(){

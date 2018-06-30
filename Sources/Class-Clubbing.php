@@ -7,8 +7,9 @@
  * @link https://dragomano.ru/mods/clubbing
  * @author Bugo <bugo@dragomano.ru>
  * @copyright 2018 Bugo
+ * @license https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA
  *
- * @version 0.1.1
+ * @version 0.2
  */
 
 if (!defined('SMF'))
@@ -50,12 +51,12 @@ class Clubbing
 
 		if (!empty($_REQUEST['topic']) || (!empty($context['current_action']) && $context['current_action'] == 'profile')) {
 			$context['html_headers'] .= '
-	<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/clubbing/iziModal.min.css" />
-	<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/clubbing/clubbing.css" />';
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.1/jquery.modal.min.css" />
+	<link rel="stylesheet" type="text/css" href="' . $settings['default_theme_url'] . '/css/clubbing.css" />';
 
 			$context['insert_after_template'] .= '
-		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/clubbing/jquery.min.js"></script>
-		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/clubbing/iziModal.min.js"></script>';
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.1/jquery.modal.min.js"></script>';
 		}
 	}
 
@@ -265,7 +266,7 @@ class Clubbing
 					'text'  => 'cb_add_clubbing',
 					'image' => 'im_reply.gif',
 					'lang'  => true,
-					'url'   => '#',
+					'url'   => '#clubbing',
 				),
 			) : array(
 				'edit_clubbing' => array(
@@ -273,7 +274,7 @@ class Clubbing
 					'text'  => 'cb_edit_clubbing',
 					'image' => 'im_reply.gif',
 					'lang'  => true,
-					'url'   => '#',
+					'url'   => '#clubbing',
 				),
 			),
 			array_slice($normal_buttons, $counter, null, true)
@@ -359,23 +360,16 @@ class Clubbing
 					} else {
 					$output['body'] .= '
 				<hr />
-				<input class="button_submit" name="cb_button_join" type="button" value="' . $txt['cb_join_to_clubbing'] . '" />
-				<div id="modal" data-iziModal-title="' . $txt['cb_clubbing_info'] . '" data-iziModal-icon="icon-home">
+				<a href="#join_modal" rel="modal:open" class="button_submit">' . $txt['cb_join_to_clubbing'] . '</a>
+				<div id="join_modal" class="join_modal" style="display:none">
 					<div class="modal-content">
 						<div class="centertext">
+							<h3>' . $txt['cb_clubbing_info'] . '</h3>
 							<div class="information">' . strtr($txt['cb_clubbing_text'], array('{DATA}' => un_preparsecode($requisites), '{LINK}' => $boardurl, '{USER}' => $user_info['id'])) . '</div>
-							<button type="button" class="button_submit" data-izimodal-close data-izimodal-transitionout="bounceOutDown">' . $txt['cb_clubbing_ok'] . '</button>
+							<a href="#close" rel="modal:close" class="button_submit">' . $txt['cb_clubbing_ok'] . '</a>
 						</div>
 					</div>
 				</div>';
-
-						$context['insert_after_template'] .= '
-				<script type="text/javascript">
-					jQuery(document).ready(function($){
-						$("input[name=cb_button_join]").attr("data-izimodal-open", "#modal").attr("data-izimodal-transitionin", "fadeInDown");
-						$("#modal").iziModal();
-					});
-				</script>';
 					}
 				}
 			}

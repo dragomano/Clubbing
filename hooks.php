@@ -8,16 +8,16 @@ elseif(!defined('SMF'))
 if ((SMF == 'SSI') && !$user_info['is_admin'])
 	die('Admin privileges required.');
 
+// Hooks
 $hooks = array(
 	'integrate_pre_include' => '$sourcedir/Class-Clubbing.php',
 	'integrate_pre_load'    => 'Clubbing::hooks'
 );
 
-if (!empty($context['uninstalling']))
-	$call = 'remove_integration_function';
-
-else
+if (empty($context['uninstalling']))
 	$call = 'add_integration_function';
+else
+	$call = 'remove_integration_function';
 
 foreach ($hooks as $hook => $function)
 	$call($hook, $function);
