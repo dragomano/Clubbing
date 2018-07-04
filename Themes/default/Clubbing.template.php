@@ -131,7 +131,7 @@ function template_profile()
 				echo '
 				<div class="floatright">
 					<ul class="reset smalltext quickbuttons">
-						<li class="approve_button" data-izimodal-open="#modal_', $item['topic'], '">
+						<li class="approve_button">
 							<a href="#modal_', $item['topic'], '"><span>', $txt['cb_add_member'], '</span></a>
 						</li>
 						<li class="remove_button">
