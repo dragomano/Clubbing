@@ -9,12 +9,8 @@
  * @copyright 2018 Bugo
  * @license https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA
  *
- * @version 0.2
+ * @version 0.3
  */
-
-function template_post()
-{
-}
 
 function template_display_above()
 {

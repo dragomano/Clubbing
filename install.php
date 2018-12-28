@@ -35,14 +35,14 @@ $tables[] = array(
 			'name' => 'requisites',
 			'type' => 'text',
 			'null' => false
-		),
+		)
 	),
 	'indexes' => array(
 			array(
 			'type'    => 'primary',
-			'columns' => array('id'),
-		),
-	),
+			'columns' => array('id')
+		)
+	)
 );
 
 $tables[] = array(
@@ -59,14 +59,14 @@ $tables[] = array(
 			'type'     => 'mediumint',
 			'size'     => 8,
 			'unsigned' => true
-		),
+		)
 	),
 	'indexes' => array(
 		 array(
 			'type'    => 'primary',
-			'columns' => array('member_id', 'topic_id'),
-		),
-	),
+			'columns' => array('member_id', 'topic_id')
+		)
+	)
 );
 
 db_extend('packages');

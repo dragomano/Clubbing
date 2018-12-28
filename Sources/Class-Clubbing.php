@@ -9,7 +9,7 @@
  * @copyright 2018 Bugo
  * @license https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA
  *
- * @version 0.2
+ * @version 0.3
  */
 
 if (!defined('SMF'))
@@ -98,9 +98,6 @@ class Clubbing
 
 		isAllowedTo('make_clubbings');
 
-		loadTemplate('Clubbing');
-		$context['sub_template'] = 'post';
-
 		if (empty($_POST))
 			return;
 
@@ -128,6 +125,8 @@ class Clubbing
 				array('id')
 			);
 		}
+
+		die;
 	}
 
 	/**
@@ -140,9 +139,6 @@ class Clubbing
 		global $context, $sourcedir, $smcFunc;
 
 		isAllowedTo('make_clubbings');
-
-		loadTemplate('Clubbing');
-		$context['sub_template'] = 'post';
 
 		if (empty($_POST))
 			return;
@@ -166,6 +162,8 @@ class Clubbing
 				)
 			);
 		}
+
+		die;
 	}
 
 	/**
@@ -266,16 +264,16 @@ class Clubbing
 					'text'  => 'cb_add_clubbing',
 					'image' => 'im_reply.gif',
 					'lang'  => true,
-					'url'   => '#clubbing',
-				),
+					'url'   => '#clubbing'
+				)
 			) : array(
 				'edit_clubbing' => array(
 					'test'  => 'make_clubbings',
 					'text'  => 'cb_edit_clubbing',
 					'image' => 'im_reply.gif',
 					'lang'  => true,
-					'url'   => '#clubbing',
-				),
+					'url'   => '#clubbing'
+				)
 			),
 			array_slice($normal_buttons, $counter, null, true)
 		);
@@ -337,7 +335,7 @@ class Clubbing
 			}
 
 			// Вывод кнопки "Присоединиться"
-			if (!$output['is_message_author']) {
+			if (empty($output['is_message_author'])) {
 				$request = $smcFunc['db_query']('', '
 					SELECT requisites
 					FROM {db_prefix}cb_items
@@ -392,8 +390,8 @@ class Clubbing
 			'subsections' => array(),
 			'permission'  => array(
 				'own' => 'profile_view_own',
-				'any' => 'profile_view_any',
-			),
+				'any' => 'profile_view_any'
+			)
 		);
 	}
 }
