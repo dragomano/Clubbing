@@ -6,10 +6,10 @@
  * @package Clubbing
  * @link https://dragomano.ru/mods/clubbing
  * @author Bugo <bugo@dragomano.ru>
- * @copyright 2018 Bugo
+ * @copyright 2018-2019 Bugo
  * @license https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA
  *
- * @version 0.3
+ * @version 0.3.1
  */
 
 if (!defined('SMF'))
@@ -45,9 +45,6 @@ class Clubbing
 		loadLanguage('Clubbing/');
 
 		$context['make_clubbings'] = allowedTo('make_clubbings');
-
-		if (empty($context['make_clubbings']))
-			return;
 
 		if (!empty($_REQUEST['topic']) || (!empty($context['current_action']) && $context['current_action'] == 'profile')) {
 			$context['html_headers'] .= '
@@ -94,7 +91,7 @@ class Clubbing
 	 */
 	private static function addClubbing()
 	{
-		global $context, $sourcedir, $smcFunc;
+		global $sourcedir, $smcFunc;
 
 		isAllowedTo('make_clubbings');
 
@@ -136,7 +133,7 @@ class Clubbing
 	 */
 	private static function editClubbing()
 	{
-		global $context, $sourcedir, $smcFunc;
+		global $sourcedir, $smcFunc;
 
 		isAllowedTo('make_clubbings');
 
@@ -497,7 +494,7 @@ function clubbingProfile($memID)
 
 	if ($context['cb_can_manage']) {
 		// Добавляем участников
-		if (isset($_POST['members'])) {file_put_contents('a.txt', $_POST['members']);
+		if (isset($_POST['members'])) {
 			$members = explode(',', trim($_POST['members'], ' '));
 
 			$request = $smcFunc['db_query']('', '

@@ -6,10 +6,10 @@
  * @package Clubbing
  * @link https://dragomano.ru/mods/clubbing
  * @author Bugo <bugo@dragomano.ru>
- * @copyright 2018 Bugo
+ * @copyright 2018-2019 Bugo
  * @license https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA
  *
- * @version 0.3
+ * @version 0.3.1
  */
 
 function template_display_above()
@@ -48,18 +48,18 @@ function template_display_below()
 		</div>
 	</div>
 	<script type="text/javascript">
-		jQuery(document).ready(function($){
+		jQuery(document).ready(function($) {
 			$(".button_strip_' . (empty($context['clubbing']['id']) ? 'add' : 'edit') . '_clubbing").attr("rel", "modal:open");
-			$("form[name=clubbing_form]").on("submit", function(){
+			$("form[name=clubbing_form]").on("submit", function() {
 				msg = $(this).serialize();
 				$.ajax({
 					type: "POST",
 					url: "' . $scripturl . '?action=clubbings;sa=' . (empty($context['clubbing']['id']) ? 'add' : 'edit') . '",
 					data: msg,
-					success: function(){
+					success: function() {
 						window.location = smf_prepareScriptUrl(smf_scripturl) + \'topic=' . $context['current_topic'] . '.0\';
 					},
-					error: function(){
+					error: function() {
 						alert("' . JavaScriptEscape($txt['cb_is_error']) . '" + xhr.responseCode);
 					}
 				});
@@ -155,7 +155,7 @@ function template_profile()
 	if ($context['cb_can_manage']) {
 		$context['insert_after_template'] .= '
 		<script type="text/javascript">
-			jQuery(document).ready(function($){
+			jQuery(document).ready(function($) {
 				$(".approve_button a").attr("rel", "modal:open");
 				$("form[name^=clubbing_form]").on("submit", function(){
 					msg = $(this).serialize();
@@ -163,10 +163,10 @@ function template_profile()
 						type: "POST",
 						url: "' . $scripturl . '?action=profile;area=clubbings;u=' . $context['member']['id'] . '",
 						data: msg,
-						success: function(){
+						success: function() {
 							window.location = smf_prepareScriptUrl(smf_scripturl) + \'action=profile;area=clubbings;u=' . $context['member']['id'] . '\';
 						},
-						error: function(){
+						error: function() {
 							alert("' . JavaScriptEscape($txt['cb_is_error']) . '" + xhr.responseCode);
 						}
 					});
