@@ -3,13 +3,13 @@
 <package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
 	<id>Bugo:Clubbing</id>
 	<name>Clubbing</name>
-	<version>0.3.1</version>
+	<version>0.4</version>
 	<type>modification</type>
 
 	<install for="2.0 - 2.0.99">
 		<readme parsebbc="true" lang="russian-utf8">readme/russian-utf8.txt</readme>
 		<readme parsebbc="true" lang="russian">readme/russian.txt</readme>
-		<readme parsebbc="true">readme/readme.txt</readme>
+		<readme parsebbc="true" lang="english">readme/english.txt</readme>
 		<require-dir name="Sources" destination="$boarddir" />
 		<require-dir name="Themes" destination="$boarddir" />
 		<database>install.php</database>

@@ -6,10 +6,10 @@
  * @package Clubbing
  * @link https://dragomano.ru/mods/clubbing
  * @author Bugo <bugo@dragomano.ru>
- * @copyright 2018-2019 Bugo
- * @license https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA
+ * @copyright 2018-2020 Bugo
+ * @license https://opensource.org/licenses/MIT The MIT License
  *
- * @version 0.3.1
+ * @version 0.4
  */
 
 if (!defined('SMF'))
